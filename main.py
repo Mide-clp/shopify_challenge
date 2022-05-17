@@ -1,19 +1,25 @@
 # from dotenv import load_dotenv
+import os
 from flask import Flask, render_template, redirect, url_for, flash, request, abort
 from flask_sqlalchemy import SQLAlchemy
 from functools import wraps
+from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from sqlalchemy.orm import relationship
 from flask_login import UserMixin, login_user, LoginManager, login_required, current_user, logout_user
 
-SAVE_PATH = "static/images/id/"
+SAVE_PATH = "static/assets/images/uploads/"
+UPLOAD_FOLDER = "assets/images/uploads/"
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "letbuildthisstuff"
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///images.db"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
 db = SQLAlchemy(app)
+
+app.config["SAVE_PATH"] = SAVE_PATH
+app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -63,7 +69,7 @@ class Image(db.Model):
 db.create_all()
 
 
-##########################END################################################
+########################## END ################################################
 
 @app.route('/register', methods=["GET", "POST"])
 def register():
@@ -118,21 +124,53 @@ def login():
 
 @app.route("/")
 def home():
-    data = Image.query.all()
-    return render_template("index.html", data=data)
+    images = Image.query.all()
+    return render_template("index.html", images=images)
 
 
 @app.route("/dashboard")
 def dashboard():
-    return render_template("dashboard.html")
+    images = Image.query.filter_by(user_id=current_user.id).all()
+
+    return render_template("dashboard.html", images=images)
 
 
 @app.route("/add", methods=["GET", "POST"])
 def add():
     if request.method == "POST":
-        for file in request.files["images"]:
-            print(file)
+        files = request.files.getlist("files[]")
+
+        for file in files:
+            if file and allowed_file(file.filename):
+                file_name = secure_filename(file.name)
+                print(file_name)
+                # saving file to file path
+                file.save(os.path.join(SAVE_PATH, file_name))
+                os.rename(SAVE_PATH + file_name, SAVE_PATH + file.filename)
+                image_loc = UPLOAD_FOLDER + file.filename
+                new_image = Image()
+
+                if "public" in request.form:
+                    new_image.public = True
+
+                else:
+                    new_image.public = False
+
+                new_image.path = image_loc
+                new_image.user_id = current_user.id
+
+                db.session.add(new_image)
+                db.session.commit()
+            else:
+                flash("File not supported. only .jpg, .png, and .jpeg allowed")
+
+        return redirect(url_for("dashboard"))
+
     return redirect(url_for("dashboard"))
 
+
+@app.route('/nav')
+def nav():
+    return render_template("header.html")
 
 app.run(debug=True)

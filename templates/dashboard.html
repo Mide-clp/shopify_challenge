@@ -1,3 +1,4 @@
+{% with messages=get_flashed_messages() %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,9 +12,18 @@
 <body>
 
     <div class="ma">
+        {% if messages %}
+            {% for message in messages %}
+              <p style="color: red; font-weight:500;">{{message}}</p>
+            {% endfor %}
+        {% endif %}
         <form class="label" action="{{url_for('add')}}" method="POST" enctype="multipart/form-data">
+
             <label for="formFileMultiple" class="form-label form">Upload new images</label>
-            <input class="form-control"  type="file" id="formFileMultiple" name="images" multiple />
+            <input class="form-control"  type="file" id="formFileMultiple" name="files[]" multiple />
+            <input  type="checkbox"  name="public" multiple />
+            <label>click to make image public</label>
+            <br>
             <button type="submit" class="btn btn-outline-secondary btn-lg">Upload images</button>
         </form>
         <br>
@@ -25,61 +35,20 @@
     </h2>
 
     <div class="row ma">
-        <div class="col-md-3">
-            <div class="custom-control custom-checkbox image-checkbox">
-                <input type="checkbox" class="custom-control-input" id="ck1a">
-                <label class="custom-control-label" for="ck1a">
-                    <img src="{{url_for('static', filename='assets/images/portfolio/fullwidth/item-1.jpg')}}" alt="#" class="img-fluid">
-                </label>
+        {% for image in images %}
+            <div class="col-md-3">
+                <div class="custom-control custom-checkbox image-checkbox">
+                    <input type="checkbox" class="custom-control-input" id="ck1a">
+                    <label class="custom-control-label" for="ck1a">
+                        <img src="{{url_for('static', filename=image.path)}}" alt="#" class="img-fluid">
+                    </label>
+                </div>
             </div>
-        </div>
-        <div class="col-md-3">
-            <div class="custom-control custom-checkbox image-checkbox">
-                <input type="checkbox" class="custom-control-input" id="ck1b">
-                <label class="custom-control-label" for="ck1b">
-                    <img src="{{url_for('static', filename='assets/images/portfolio/fullwidth/item-2.jpg')}}" alt="#" class="img-fluid">
-                </label>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="custom-control custom-checkbox image-checkbox">
-                <input type="checkbox" class="custom-control-input" id="ck1c">
-                <label class="custom-control-label" for="ck1c">
-                    <img src="{{url_for('static', filename='assets/images/portfolio/fullwidth/item-3.jpg')}}" alt="#" class="img-fluid">
-                </label>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="custom-control custom-checkbox image-checkbox">
-                <input type="checkbox" class="custom-control-input" id="ck1d">
-                <label class="custom-control-label" for="ck1d">
-                    <img src="{{url_for('static', filename='assets/images/portfolio/fullwidth/item-4.jpg')}}" alt="#" class="img-fluid">
-
-                </label>
-            </div>
-        </div>
-
-        <div class="col-md-3">
-            <div class="custom-control custom-checkbox image-checkbox">
-                <input type="checkbox" class="custom-control-input" id="ck2">
-                <label class="custom-control-label" for="ck2">
-                    <img src="{{url_for('static', filename='assets/images/portfolio/fullwidth/item-3.jpg')}}" alt="#" class="img-fluid">
-                </label>
-            </div>
-        </div>
-
-        <div class="col-md-3">
-            <div class="custom-control custom-checkbox image-checkbox">
-                <input type="checkbox" class="custom-control-input" id="k1d">
-                <label class="custom-control-label" for="k1d">
-                    <img src="{{url_for('static', filename='assets/images/portfolio/fullwidth/item-4.jpg')}}" alt="#" class="img-fluid">
-
-                </label>
-            </div>
-        </div>
+        {% endfor %}
 </div>
 
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 </body>
 </html>
+{% endwith %}
