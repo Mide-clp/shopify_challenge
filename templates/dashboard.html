@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{url_for('static', filename='assets/css/style.css')}}">
+
+
+<body>
+
+    <div class="ma">
+        <form class="label" action="{{url_for('add')}}" method="POST" enctype="multipart/form-data">
+            <label for="formFileMultiple" class="form-label form">Upload new images</label>
+            <input class="form-control"  type="file" id="formFileMultiple" name="images" multiple />
+            <button type="submit" class="btn btn-outline-secondary btn-lg">Upload images</button>
+        </form>
+        <br>
+
+    </div>
+
+    <h2 class="header2">
+        Your Gallery
+    </h2>
+
+    <div class="row ma">
+        <div class="col-md-3">
+            <div class="custom-control custom-checkbox image-checkbox">
+                <input type="checkbox" class="custom-control-input" id="ck1a">
+                <label class="custom-control-label" for="ck1a">
+                    <img src="{{url_for('static', filename='assets/images/portfolio/fullwidth/item-1.jpg')}}" alt="#" class="img-fluid">
+                </label>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="custom-control custom-checkbox image-checkbox">
+                <input type="checkbox" class="custom-control-input" id="ck1b">
+                <label class="custom-control-label" for="ck1b">
+                    <img src="{{url_for('static', filename='assets/images/portfolio/fullwidth/item-2.jpg')}}" alt="#" class="img-fluid">
+                </label>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="custom-control custom-checkbox image-checkbox">
+                <input type="checkbox" class="custom-control-input" id="ck1c">
+                <label class="custom-control-label" for="ck1c">
+                    <img src="{{url_for('static', filename='assets/images/portfolio/fullwidth/item-3.jpg')}}" alt="#" class="img-fluid">
+                </label>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="custom-control custom-checkbox image-checkbox">
+                <input type="checkbox" class="custom-control-input" id="ck1d">
+                <label class="custom-control-label" for="ck1d">
+                    <img src="{{url_for('static', filename='assets/images/portfolio/fullwidth/item-4.jpg')}}" alt="#" class="img-fluid">
+
+                </label>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="custom-control custom-checkbox image-checkbox">
+                <input type="checkbox" class="custom-control-input" id="ck2">
+                <label class="custom-control-label" for="ck2">
+                    <img src="{{url_for('static', filename='assets/images/portfolio/fullwidth/item-3.jpg')}}" alt="#" class="img-fluid">
+                </label>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="custom-control custom-checkbox image-checkbox">
+                <input type="checkbox" class="custom-control-input" id="k1d">
+                <label class="custom-control-label" for="k1d">
+                    <img src="{{url_for('static', filename='assets/images/portfolio/fullwidth/item-4.jpg')}}" alt="#" class="img-fluid">
+
+                </label>
+            </div>
+        </div>
+</div>
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+</body>
+</html>

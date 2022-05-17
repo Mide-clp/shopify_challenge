@@ -45,15 +45,17 @@ def allowed_file(filename):
 class User(UserMixin, db.Model):
     __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(250), nullable=True, unique=True)
-    password = db.Column(db.String(250), nullable=True)
+    user_name = db.Column(db.String(50), nullable=True)
+    email = db.Column(db.String(50), nullable=True, unique=True)
+    password = db.Column(db.String(50), nullable=True)
     image = relationship("Image", back_populates="user")
 
 
 class Image(db.Model):
     __tablename__ = "images"
     id = db.Column(db.Integer, primary_key=True)
-    path = db.Column(db.String(250), nullable=True)
+    path = db.Column(db.String(100), nullable=True)
+    public = db.Column(db.String(10), nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
     user = relationship("User", back_populates="image")
 
@@ -116,7 +118,21 @@ def login():
 
 @app.route("/")
 def home():
-    return render_template("index.html")
+    data = Image.query.all()
+    return render_template("index.html", data=data)
+
+
+@app.route("/dashboard")
+def dashboard():
+    return render_template("dashboard.html")
+
+
+@app.route("/add", methods=["GET", "POST"])
+def add():
+    if request.method == "POST":
+        for file in request.files["images"]:
+            print(file)
+    return redirect(url_for("dashboard"))
 
 
 app.run(debug=True)
