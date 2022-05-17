@@ -1,5 +1,5 @@
 {% with messages=get_flashed_messages() %}
-<!DOCTYPE html>
+{% include "header.html" %}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -30,22 +30,50 @@
 
     </div>
 
-    <h2 class="header2">
-        Your Gallery
-    </h2>
 
-    <div class="row ma">
-        {% for image in images %}
-            <div class="col-md-3">
-                <div class="custom-control custom-checkbox image-checkbox">
-                    <input type="checkbox" class="custom-control-input" id="ck1a">
-                    <label class="custom-control-label" for="ck1a">
-                        <img src="{{url_for('static', filename=image.path)}}" alt="#" class="img-fluid">
-                    </label>
-                </div>
+    <form action="{{url_for('delete_select')}}" method="post" enctype="multipart/form-data">
+            <div class="row ma">
+                <h2 class="header2">
+                    Your Public Gallery
+                </h2>
+                {% for image in images %}
+                    {% if image.public == "1"%}
+                        <div class="col-md-3">
+                            <div class="custom-control custom-checkbox image-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="{{image.id}}" name="{{image.id}}">
+                                <label class="custom-control-label" for="{{image.id}}">
+                                    <img src="{{url_for('static', filename=image.path)}}" alt="#" class="img-fluid">
+                                </label>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
             </div>
-        {% endfor %}
-</div>
+
+
+        <div class="row ma">
+            <h2 class="header2">
+                Your Private Gallery
+            </h2>
+            {% for image in images %}
+                {% if image.public == "0"%}
+                    <div class="col-md-3">
+                        <div class="custom-control custom-checkbox image-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="{{image.id}}" name="{{image.id}}">
+                            <label class="custom-control-label" for="{{image.id}}">
+                                <img src="{{url_for('static', filename=image.path)}}" alt="#" class="img-fluid">
+                            </label>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+        <br>
+        <div class="uploadBtn">
+            <button type="submit" class="btn btn-secondary bnt yellow">Delete selected images</button>
+            <a  href="{{url_for('delete')}}" ><button type="button" class="btn btn-secondary bnt red">Delete all images</button></a>
+        </div>
+    </form>
 
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>

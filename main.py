@@ -125,14 +125,17 @@ def login():
 @app.route("/")
 def home():
     images = Image.query.all()
-    return render_template("index.html", images=images)
+    return render_template("index.html", images=images, user=current_user.is_authenticated)
 
 
 @app.route("/dashboard")
 def dashboard():
+    if not current_user.is_authenticated:
+        flash("This user does not exist")
+        return redirect("login")
     images = Image.query.filter_by(user_id=current_user.id).all()
 
-    return render_template("dashboard.html", images=images)
+    return render_template("dashboard.html", images=images, user=current_user.is_authenticated)
 
 
 @app.route("/add", methods=["GET", "POST"])
@@ -169,8 +172,38 @@ def add():
     return redirect(url_for("dashboard"))
 
 
-@app.route('/nav')
-def nav():
-    return render_template("header.html")
+@app.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('home'))
+
+
+@app.route("/delete_select", methods=["GET", "POST"])
+def delete_select():
+    if request.method == "POST":
+        images = Image.query.filter_by(user_id=current_user.id).all()
+        response = request.form.to_dict()
+        print(response.keys())
+        for image in images:
+            if str(image.id) in response.keys():
+                image = Image.query.get(image.id)
+                db.session.delete(image)
+            db.session.commit()
+
+        return redirect(url_for("dashboard"))
+
+    return redirect(url_for("dashboard"))
+
+
+@app.route("/delete", methods=["GET", "POST"])
+def delete():
+    images = Image.query.filter_by(user_id=current_user.id).all()
+
+    for image in images:
+        image = Image.query.get(image.id)
+        db.session.delete(image)
+    db.session.commit()
+    return redirect(url_for("dashboard"))
+
 
 app.run(debug=True)

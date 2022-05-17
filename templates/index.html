@@ -1,9 +1,5 @@
-
-<!DOCTYPE html>
+{% include "header.html" %}
 <html lang="en">
-
-
-<!-- molla/elements-portfolio.html  22 Nov 2019 10:05:20 GMT -->
 <head>
 
     <!-- Plugins CSS File -->
@@ -13,18 +9,18 @@
 </head>
 
 <body>
-  <h1 style="">Public Gallery</h1>
-  <div class="portfolio-container portfolio-nogap" data-layout="fitRows">
+  <h1 class="ma">Public Gallery</h1>
+  <div class="portfolio-container portfolio-nogap ma" data-layout="fitRows">
 	  {% for image in images %}
 	  	{% if image.public == "1"%}
-			  <div class="portfolio-item accessories women col-sm-6 col-md-4 col-lg-3">
-				  <div class="portfolio">
+			  <div  class="portfolio-item accessories women col-sm-6 col-md-4 col-lg-3 public">
+				  <div class="portfolio public">
 					  <figure class="portfolio-media">
 						  <a href="#">
-							  <img src="{{url_for('static', filename=image.path)}}" alt="item">
+							  <img src="{{url_for('static', filename=image.path)}}" alt="item" class="product-image">
 						  </a>
 					  </figure>
-					  <div class="portfolio-content">
+					  <div class="portfolio-content ">
 						  <h3 class="portfolio-title"><a href="#">Vestibulum auctor dapibus</a></h3><!-- End .portfolio-title -->
 						  <div class="portfolio-tags">
 							  <a href="#">Accessories</a>
