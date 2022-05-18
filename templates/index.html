@@ -20,7 +20,7 @@
 				  <div class="portfolio public">
 					  <figure class="portfolio-media">
 						  <a href="#">
-							  <img src="{{url_for('static', filename=image.path)}}" alt="item" class="product-image">
+							  <img src="{{image.path}}" alt="{{image.path.split('/')[-1]}}" class="product-image">
 						  </a>
 					  </figure>
 					  <div class="portfolio-content ">

@@ -1,6 +1,8 @@
 import os
+from dotenv import load_dotenv
 import PIL.Image
-from flask import Flask, render_template, redirect, url_for, flash, request, abort
+import boto3
+from flask import Flask, render_template, redirect, url_for, flash, request, jsonify, abort
 from flask_sqlalchemy import SQLAlchemy
 from functools import wraps
 from werkzeug.utils import secure_filename
@@ -8,8 +10,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy.orm import relationship
 from flask_login import UserMixin, login_user, LoginManager, login_required, current_user, logout_user
 
-SAVE_PATH = "static/assets/images/uploads/"
-UPLOAD_FOLDER = "assets/images/uploads/"
+load_dotenv()
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "letbuildthisstuff"
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///images.db"
@@ -17,8 +19,10 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
 db = SQLAlchemy(app)
 
-app.config["SAVE_PATH"] = SAVE_PATH
-app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+app.config["BUCKET"] = os.getenv("BUCKET")
+app.config["AWS_ACCESS_KEY_ID"] = os.getenv("AWS_ACCESS_KEY_ID")
+app.config["AWS_SECRET_ACCESS_KEY"] = os.getenv("AWS_SECRET_ACCESS_KEY")
+app.config["REGION_NAME"] = os.getenv("REGION_NAME")
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -44,6 +48,36 @@ def allowed_file(filename):
         return True
     else:
         return False
+
+
+def connect_to_s3():
+    client = boto3.client("s3",
+                          region_name=REGION_NAME,
+                          aws_access_key_id=AWS_ACCESS_KEY_ID,
+                          aws_secret_access_key=AWS_SECRET_ACCESS_KEY)
+
+    return client
+
+
+def upload_to_s3(file, file_name):
+    client = connect_to_s3()
+    content_type = request.mimetype
+
+    client.put_object(
+        Body=file,
+        Bucket="challenge-shopify-image",
+        Key=file_name,
+        ContentType=content_type,
+    )
+
+
+def delete_object(file_name):
+    client = connect_to_s3()
+
+    client.delete_object(
+        Bucket=BUCKET,
+        Key=file_name
+    )
 
 
 ############################### database schema ##############################
@@ -73,6 +107,8 @@ db.create_all()
 @app.route('/register', methods=["GET", "POST"])
 def register():
     if request.method == "POST":
+        data = request.get_json()
+        print(data)
         exist_user = User.query.filter_by(email=request.form["register-email"]).first()
 
         # checking if user already exist
@@ -148,14 +184,15 @@ def add():
                 file_name = secure_filename(file.name)
 
                 # saving file to file path
-                file.save(os.path.join(SAVE_PATH, file_name))
-                os.rename(SAVE_PATH + file_name, SAVE_PATH + file.filename)
-                image_loc = UPLOAD_FOLDER + file.filename
+                upload_to_s3(file, file.filename)
+                # file.save(os.path.join(SAVE_PATH, file_name))
+
+                image_loc = "https://challenge-shopify-image.s3.amazonaws.com/" + file.filename
 
                 # reduce image quality to compress size
-                save_dir = SAVE_PATH + file.filename
-                image_file = PIL.Image.open(save_dir)
-                image_file.save(save_dir, quality=30, optimize=True)
+                # save_dir = SAVE_PATH + file.filename
+                # image_file = PIL.Image.open(save_dir)
+                # image_file.save(save_dir, quality=30, optimize=True)
 
                 new_image = Image()
 
@@ -193,6 +230,8 @@ def delete_select():
         for image in images:
             if str(image.id) in response.keys():
                 image = Image.query.get(image.id)
+
+                delete_object(image.path.split("/")[-1])
                 db.session.delete(image)
             db.session.commit()
 
@@ -207,9 +246,11 @@ def delete():
 
     for image in images:
         image = Image.query.get(image.id)
+        delete_object(image.path.split("/")[-1])
         db.session.delete(image)
     db.session.commit()
     return redirect(url_for("dashboard"))
+
 
 if __name__ == "__main__":
     app.run(debug=True)
