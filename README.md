@@ -1,4 +1,4 @@
-## SHopify Internship challenge
+## Shopify Internship challenge
 
 ### This is an image repository 
 
