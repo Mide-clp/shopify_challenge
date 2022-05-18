@@ -1,11 +1,10 @@
-# from dotenv import load_dotenv
 import os
+import PIL.Image
 from flask import Flask, render_template, redirect, url_for, flash, request, abort
 from flask_sqlalchemy import SQLAlchemy
 from functools import wraps
 from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
-
 from sqlalchemy.orm import relationship
 from flask_login import UserMixin, login_user, LoginManager, login_required, current_user, logout_user
 
@@ -152,6 +151,12 @@ def add():
                 file.save(os.path.join(SAVE_PATH, file_name))
                 os.rename(SAVE_PATH + file_name, SAVE_PATH + file.filename)
                 image_loc = UPLOAD_FOLDER + file.filename
+
+                # reduce image quality to compress size
+                save_dir = SAVE_PATH + file.filename
+                image_file = PIL.Image.open(save_dir)
+                image_file.save(save_dir, quality=30, optimize=True)
+
                 new_image = Image()
 
                 if "public" in request.form:
