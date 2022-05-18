@@ -86,11 +86,12 @@ def register():
             return redirect(request.url)
 
         email = request.form["register-email"]
-
+        user_name = request.form["user_name"]
         password = generate_password_hash(request.form["register-password"], method='pbkdf2:sha256', salt_length=8)
         user = User()
         user.email = email
         user.password = password
+        user.user_name = user_name
 
         # committing change to database
         db.session.add(user)
@@ -125,13 +126,13 @@ def login():
 @app.route("/")
 def home():
     images = Image.query.all()
+
     return render_template("index.html", images=images, user=current_user.is_authenticated)
 
 
 @app.route("/dashboard")
 def dashboard():
     if not current_user.is_authenticated:
-        flash("This user does not exist")
         return redirect("login")
     images = Image.query.filter_by(user_id=current_user.id).all()
 
@@ -146,7 +147,7 @@ def add():
         for file in files:
             if file and allowed_file(file.filename):
                 file_name = secure_filename(file.name)
-                print(file_name)
+
                 # saving file to file path
                 file.save(os.path.join(SAVE_PATH, file_name))
                 os.rename(SAVE_PATH + file_name, SAVE_PATH + file.filename)
@@ -183,7 +184,7 @@ def delete_select():
     if request.method == "POST":
         images = Image.query.filter_by(user_id=current_user.id).all()
         response = request.form.to_dict()
-        print(response.keys())
+
         for image in images:
             if str(image.id) in response.keys():
                 image = Image.query.get(image.id)
