@@ -15,7 +15,7 @@ BUCKET = os.getenv("BUCKET")
 AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
 REGION_NAME = os.getenv("REGION_NAME")
-print(os.getenv("DATABASE_URI"))
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
 app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URI")
@@ -92,7 +92,7 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_name = db.Column(db.String(50), nullable=True)
     email = db.Column(db.String(50), nullable=True, unique=True)
-    password = db.Column(db.String(50), nullable=True)
+    password = db.Column(db.String(100), nullable=True)
     image = relationship("Image", back_populates="user")
 
 
