@@ -23,11 +23,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
 db = SQLAlchemy(app)
 
-app.config["BUCKET"] = BUCKET
-app.config["AWS_ACCESS_KEY_ID"] = AWS_ACCESS_KEY_ID
-app.config["AWS_SECRET_ACCESS_KEY"] = AWS_SECRET_ACCESS_KEY
-app.config["REGION_NAME"] = REGION_NAME
-
 login_manager = LoginManager()
 login_manager.init_app(app)
 
@@ -61,7 +56,6 @@ def connect_to_s3():
                           aws_secret_access_key=AWS_SECRET_ACCESS_KEY
                           )
 
-    print(REGION_NAME)
     return client
 
 
