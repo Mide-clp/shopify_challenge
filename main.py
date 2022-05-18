@@ -11,6 +11,10 @@ from sqlalchemy.orm import relationship
 from flask_login import UserMixin, login_user, LoginManager, login_required, current_user, logout_user
 
 load_dotenv()
+BUCKET = os.getenv("BUCKET")
+AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
+REGION_NAME = os.getenv("REGION_NAME")
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "letbuildthisstuff"
@@ -19,10 +23,10 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
 db = SQLAlchemy(app)
 
-app.config["BUCKET"] = os.getenv("BUCKET")
-app.config["AWS_ACCESS_KEY_ID"] = os.getenv("AWS_ACCESS_KEY_ID")
-app.config["AWS_SECRET_ACCESS_KEY"] = os.getenv("AWS_SECRET_ACCESS_KEY")
-app.config["REGION_NAME"] = os.getenv("REGION_NAME")
+app.config["BUCKET"] = BUCKET
+app.config["AWS_ACCESS_KEY_ID"] = AWS_ACCESS_KEY_ID
+app.config["AWS_SECRET_ACCESS_KEY"] = AWS_SECRET_ACCESS_KEY
+app.config["REGION_NAME"] = REGION_NAME
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -54,7 +58,8 @@ def connect_to_s3():
     client = boto3.client("s3",
                           region_name=REGION_NAME,
                           aws_access_key_id=AWS_ACCESS_KEY_ID,
-                          aws_secret_access_key=AWS_SECRET_ACCESS_KEY)
+                          aws_secret_access_key=AWS_SECRET_ACCESS_KEY
+                          )
 
     return client
 
