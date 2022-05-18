@@ -15,7 +15,7 @@ BUCKET = os.getenv("BUCKET")
 AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
 REGION_NAME = os.getenv("REGION_NAME")
-
+print(os.getenv("DATABASE_URI"))
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
 app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URI")
@@ -113,8 +113,7 @@ db.create_all()
 @app.route('/register', methods=["GET", "POST"])
 def register():
     if request.method == "POST":
-        data = request.get_json()
-        print(data)
+
         exist_user = User.query.filter_by(email=request.form["register-email"]).first()
 
         # checking if user already exist
