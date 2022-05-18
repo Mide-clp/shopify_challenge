@@ -12,17 +12,19 @@ from flask_login import UserMixin, login_user, LoginManager, login_required, cur
 
 load_dotenv()
 BUCKET = os.getenv("BUCKET")
+
 AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
 REGION_NAME = os.getenv("REGION_NAME")
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
-app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URI")
+app.config['SECRET_KEY'] = "os.getenv"
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///images.db"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
 db = SQLAlchemy(app)
-
+# os.getenv("DATABASE_URI")
+os.getenv("SECRET_KEY")
 login_manager = LoginManager()
 login_manager.init_app(app)
 
@@ -186,7 +188,7 @@ def add():
                 upload_to_s3(file, file.filename)
                 # file.save(os.path.join(SAVE_PATH, file_name))
 
-                image_loc = "https://challenge-shopify-image.s3.amazonaws.com/" + file.filename
+                image_loc = f"https://{BUCKET}.s3.amazonaws.com/" + file.filename
 
                 # reduce image quality to compress size
                 # save_dir = SAVE_PATH + file.filename
