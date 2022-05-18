@@ -211,5 +211,5 @@ def delete():
     db.session.commit()
     return redirect(url_for("dashboard"))
 
-
-app.run(debug=True)
+if __name__ == "__main__":
+    app.run(debug=True)
