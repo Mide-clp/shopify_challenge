@@ -61,6 +61,7 @@ def connect_to_s3():
                           aws_secret_access_key=AWS_SECRET_ACCESS_KEY
                           )
 
+    print(REGION_NAME)
     return client
 
 
@@ -70,7 +71,7 @@ def upload_to_s3(file, file_name):
 
     client.put_object(
         Body=file,
-        Bucket="challenge-shopify-image",
+        Bucket=BUCKET,
         Key=file_name,
         ContentType=content_type,
     )
