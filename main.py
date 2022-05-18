@@ -17,8 +17,8 @@ AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
 REGION_NAME = os.getenv("REGION_NAME")
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = "letbuildthisstuff"
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///images.db"
+app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
+app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
 db = SQLAlchemy(app)
