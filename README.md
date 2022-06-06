@@ -10,7 +10,7 @@
 - public dashboard
 - add and delete bulk image
 - delete all images
-- image store : `amazon s3`
+- image storage : `amazon s3`
 - database: `postgres` 
 
 ## Set up
